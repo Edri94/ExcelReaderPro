@@ -1,0 +1,346 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="bmtktp01Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="OBSERVACIONES">
+          <Key>
+            <PropertyRef Name="Id_Observacion" />
+          </Key>
+          <Property Name="Observaciones" Type="text" Nullable="false" />
+          <Property Name="Fecha_Observ" Type="datetime" />
+          <Property Name="Id_Observacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SEGUIMIENTO">
+          <Key>
+            <PropertyRef Name="Num_Solicitud" />
+          </Key>
+          <Property Name="Num_Solicitud" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fecha_Captura" Type="datetime" />
+          <Property Name="Id_ConsultorMac" Type="int" />
+          <Property Name="Id_Solicitud" Type="int" />
+          <Property Name="Id_Tramite" Type="int" />
+          <Property Name="ExisteTKT" Type="varchar" MaxLength="1" />
+          <Property Name="Puntos" Type="int" />
+          <Property Name="Circuito" Type="varchar" MaxLength="1" />
+          <Property Name="Cuenta_Cliente" Type="varchar" MaxLength="6" />
+          <Property Name="Sufijo_Kapiti" Type="varchar" MaxLength="3" />
+          <Property Name="Tipo_Persona" Type="tinyint" />
+          <Property Name="Nombre_Cliente" Type="varchar" MaxLength="40" />
+          <Property Name="Apellido_Paterno" Type="varchar" MaxLength="20" />
+          <Property Name="Apellido_Materno" Type="varchar" MaxLength="20" />
+          <Property Name="Deposito_InicialTKT" Type="money" />
+          <Property Name="Numero_Registro" Type="varchar" MaxLength="8" />
+          <Property Name="Nombre_Promotor" Type="varchar" MaxLength="80" />
+          <Property Name="Banca" Type="varchar" MaxLength="45" />
+          <Property Name="Division" Type="varchar" MaxLength="45" />
+          <Property Name="Plaza" Type="varchar" MaxLength="45" />
+          <Property Name="Sucursal" Type="varchar" MaxLength="45" />
+          <Property Name="Status" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="SEGUIMIENTO_DOCTOS">
+          <Key>
+            <PropertyRef Name="Id_SeguimientoDoc" />
+          </Key>
+          <Property Name="Num_Solicitud" Type="int" Nullable="false" />
+          <Property Name="Repc_Doc" Type="datetime" />
+          <Property Name="Analisis_Mac" Type="datetime" />
+          <Property Name="Formalizada" Type="datetime" />
+          <Property Name="Repc_Originales" Type="datetime" />
+          <Property Name="Aten_Originales" Type="datetime" />
+          <Property Name="Originales" Type="varchar" MaxLength="2" />
+          <Property Name="Nivel_Servicico" Type="varchar" MaxLength="5" />
+          <Property Name="Deposito_Inicial" Type="numeric" Precision="19" Scale="4" />
+          <Property Name="Desbloqueo_Sistemas" Type="datetime" />
+          <Property Name="Envio_Agencia" Type="datetime" />
+          <Property Name="Concluida" Type="datetime" />
+          <Property Name="Cancelacion" Type="datetime" />
+          <Property Name="Id_SeguimientoDoc" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SEGUIMIENTO_OBSERVACIONES">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="Num_Solicitud" Type="int" Nullable="false" />
+          <Property Name="Id_Observacion" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__SEGUIMIEN__Id_Ob__192BAC54">
+          <End Role="OBSERVACIONES" Type="Self.OBSERVACIONES" Multiplicity="1" />
+          <End Role="SEGUIMIENTO_OBSERVACIONES" Type="Self.SEGUIMIENTO_OBSERVACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OBSERVACIONES">
+              <PropertyRef Name="Id_Observacion" />
+            </Principal>
+            <Dependent Role="SEGUIMIENTO_OBSERVACIONES">
+              <PropertyRef Name="Id_Observacion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SEGUIMIEN__Num_S__1837881B">
+          <End Role="SEGUIMIENTO" Type="Self.SEGUIMIENTO" Multiplicity="1" />
+          <End Role="SEGUIMIENTO_OBSERVACIONES" Type="Self.SEGUIMIENTO_OBSERVACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SEGUIMIENTO">
+              <PropertyRef Name="Num_Solicitud" />
+            </Principal>
+            <Dependent Role="SEGUIMIENTO_OBSERVACIONES">
+              <PropertyRef Name="Num_Solicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SEGUIMIENTO_DOCTOS_SEGUIMIENTO">
+          <End Role="SEGUIMIENTO" Type="Self.SEGUIMIENTO" Multiplicity="1" />
+          <End Role="SEGUIMIENTO_DOCTOS" Type="Self.SEGUIMIENTO_DOCTOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SEGUIMIENTO">
+              <PropertyRef Name="Num_Solicitud" />
+            </Principal>
+            <Dependent Role="SEGUIMIENTO_DOCTOS">
+              <PropertyRef Name="Num_Solicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="bmtktp01ModelStoreContainer">
+          <EntitySet Name="OBSERVACIONES" EntityType="Self.OBSERVACIONES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SEGUIMIENTO" EntityType="Self.SEGUIMIENTO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SEGUIMIENTO_DOCTOS" EntityType="Self.SEGUIMIENTO_DOCTOS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SEGUIMIENTO_OBSERVACIONES" EntityType="Self.SEGUIMIENTO_OBSERVACIONES" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__SEGUIMIEN__Id_Ob__192BAC54" Association="Self.FK__SEGUIMIEN__Id_Ob__192BAC54">
+            <End Role="OBSERVACIONES" EntitySet="OBSERVACIONES" />
+            <End Role="SEGUIMIENTO_OBSERVACIONES" EntitySet="SEGUIMIENTO_OBSERVACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SEGUIMIEN__Num_S__1837881B" Association="Self.FK__SEGUIMIEN__Num_S__1837881B">
+            <End Role="SEGUIMIENTO" EntitySet="SEGUIMIENTO" />
+            <End Role="SEGUIMIENTO_OBSERVACIONES" EntitySet="SEGUIMIENTO_OBSERVACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SEGUIMIENTO_DOCTOS_SEGUIMIENTO" Association="Self.FK_SEGUIMIENTO_DOCTOS_SEGUIMIENTO">
+            <End Role="SEGUIMIENTO" EntitySet="SEGUIMIENTO" />
+            <End Role="SEGUIMIENTO_DOCTOS" EntitySet="SEGUIMIENTO_DOCTOS" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="bmtktp01Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="OBSERVACIONES">
+          <Key>
+            <PropertyRef Name="Id_Observacion" />
+          </Key>
+          <Property Name="Observaciones1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Fecha_Observ" Type="DateTime" Precision="3" />
+          <Property Name="Id_Observacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="SEGUIMIENTO_OBSERVACIONES" Relationship="Self.FK__SEGUIMIEN__Id_Ob__192BAC54" FromRole="OBSERVACIONES" ToRole="SEGUIMIENTO_OBSERVACIONES" />
+        </EntityType>
+        <EntityType Name="SEGUIMIENTO">
+          <Key>
+            <PropertyRef Name="Num_Solicitud" />
+          </Key>
+          <Property Name="Num_Solicitud" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fecha_Captura" Type="DateTime" Precision="3" />
+          <Property Name="Id_ConsultorMac" Type="Int32" />
+          <Property Name="Id_Solicitud" Type="Int32" />
+          <Property Name="Id_Tramite" Type="Int32" />
+          <Property Name="ExisteTKT" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="Puntos" Type="Int32" />
+          <Property Name="Circuito" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="Cuenta_Cliente" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="Sufijo_Kapiti" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="Tipo_Persona" Type="Byte" />
+          <Property Name="Nombre_Cliente" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="Apellido_Paterno" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Apellido_Materno" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Deposito_InicialTKT" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Numero_Registro" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="Nombre_Promotor" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="Banca" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Division" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Plaza" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Sucursal" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="SEGUIMIENTO_OBSERVACIONES" Relationship="Self.FK__SEGUIMIEN__Num_S__1837881B" FromRole="SEGUIMIENTO" ToRole="SEGUIMIENTO_OBSERVACIONES" />
+          <NavigationProperty Name="SEGUIMIENTO_DOCTOS" Relationship="Self.FK_SEGUIMIENTO_DOCTOS_SEGUIMIENTO" FromRole="SEGUIMIENTO" ToRole="SEGUIMIENTO_DOCTOS" />
+        </EntityType>
+        <EntityType Name="SEGUIMIENTO_DOCTOS">
+          <Key>
+            <PropertyRef Name="Id_SeguimientoDoc" />
+          </Key>
+          <Property Name="Num_Solicitud" Type="Int32" Nullable="false" />
+          <Property Name="Repc_Doc" Type="DateTime" Precision="3" />
+          <Property Name="Analisis_Mac" Type="DateTime" Precision="3" />
+          <Property Name="Formalizada" Type="DateTime" Precision="3" />
+          <Property Name="Repc_Originales" Type="DateTime" Precision="3" />
+          <Property Name="Aten_Originales" Type="DateTime" Precision="3" />
+          <Property Name="Originales" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="Nivel_Servicico" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Deposito_Inicial" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Desbloqueo_Sistemas" Type="DateTime" Precision="3" />
+          <Property Name="Envio_Agencia" Type="DateTime" Precision="3" />
+          <Property Name="Concluida" Type="DateTime" Precision="3" />
+          <Property Name="Cancelacion" Type="DateTime" Precision="3" />
+          <Property Name="Id_SeguimientoDoc" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="SEGUIMIENTO" Relationship="Self.FK_SEGUIMIENTO_DOCTOS_SEGUIMIENTO" FromRole="SEGUIMIENTO_DOCTOS" ToRole="SEGUIMIENTO" />
+        </EntityType>
+        <EntityType Name="SEGUIMIENTO_OBSERVACIONES">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="Num_Solicitud" Type="Int32" Nullable="false" />
+          <Property Name="Id_Observacion" Type="Int32" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="OBSERVACIONES" Relationship="Self.FK__SEGUIMIEN__Id_Ob__192BAC54" FromRole="SEGUIMIENTO_OBSERVACIONES" ToRole="OBSERVACIONES" />
+          <NavigationProperty Name="SEGUIMIENTO" Relationship="Self.FK__SEGUIMIEN__Num_S__1837881B" FromRole="SEGUIMIENTO_OBSERVACIONES" ToRole="SEGUIMIENTO" />
+        </EntityType>
+        <Association Name="FK__SEGUIMIEN__Id_Ob__192BAC54">
+          <End Role="OBSERVACIONES" Type="Self.OBSERVACIONES" Multiplicity="1" />
+          <End Role="SEGUIMIENTO_OBSERVACIONES" Type="Self.SEGUIMIENTO_OBSERVACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OBSERVACIONES">
+              <PropertyRef Name="Id_Observacion" />
+            </Principal>
+            <Dependent Role="SEGUIMIENTO_OBSERVACIONES">
+              <PropertyRef Name="Id_Observacion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SEGUIMIEN__Num_S__1837881B">
+          <End Role="SEGUIMIENTO" Type="Self.SEGUIMIENTO" Multiplicity="1" />
+          <End Role="SEGUIMIENTO_OBSERVACIONES" Type="Self.SEGUIMIENTO_OBSERVACIONES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SEGUIMIENTO">
+              <PropertyRef Name="Num_Solicitud" />
+            </Principal>
+            <Dependent Role="SEGUIMIENTO_OBSERVACIONES">
+              <PropertyRef Name="Num_Solicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SEGUIMIENTO_DOCTOS_SEGUIMIENTO">
+          <End Role="SEGUIMIENTO" Type="Self.SEGUIMIENTO" Multiplicity="1" />
+          <End Role="SEGUIMIENTO_DOCTOS" Type="Self.SEGUIMIENTO_DOCTOS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SEGUIMIENTO">
+              <PropertyRef Name="Num_Solicitud" />
+            </Principal>
+            <Dependent Role="SEGUIMIENTO_DOCTOS">
+              <PropertyRef Name="Num_Solicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="bmtktp01Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="OBSERVACIONES" EntityType="Self.OBSERVACIONES" />
+          <EntitySet Name="SEGUIMIENTO" EntityType="Self.SEGUIMIENTO" />
+          <EntitySet Name="SEGUIMIENTO_DOCTOS" EntityType="Self.SEGUIMIENTO_DOCTOS" />
+          <EntitySet Name="SEGUIMIENTO_OBSERVACIONES" EntityType="Self.SEGUIMIENTO_OBSERVACIONES" />
+          <AssociationSet Name="FK__SEGUIMIEN__Id_Ob__192BAC54" Association="Self.FK__SEGUIMIEN__Id_Ob__192BAC54">
+            <End Role="OBSERVACIONES" EntitySet="OBSERVACIONES" />
+            <End Role="SEGUIMIENTO_OBSERVACIONES" EntitySet="SEGUIMIENTO_OBSERVACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SEGUIMIEN__Num_S__1837881B" Association="Self.FK__SEGUIMIEN__Num_S__1837881B">
+            <End Role="SEGUIMIENTO" EntitySet="SEGUIMIENTO" />
+            <End Role="SEGUIMIENTO_OBSERVACIONES" EntitySet="SEGUIMIENTO_OBSERVACIONES" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SEGUIMIENTO_DOCTOS_SEGUIMIENTO" Association="Self.FK_SEGUIMIENTO_DOCTOS_SEGUIMIENTO">
+            <End Role="SEGUIMIENTO" EntitySet="SEGUIMIENTO" />
+            <End Role="SEGUIMIENTO_DOCTOS" EntitySet="SEGUIMIENTO_DOCTOS" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="bmtktp01ModelStoreContainer" CdmEntityContainer="bmtktp01Entities">
+          <EntitySetMapping Name="OBSERVACIONES">
+            <EntityTypeMapping TypeName="bmtktp01Model.OBSERVACIONES">
+              <MappingFragment StoreEntitySet="OBSERVACIONES">
+                <ScalarProperty Name="Observaciones1" ColumnName="Observaciones" />
+                <ScalarProperty Name="Fecha_Observ" ColumnName="Fecha_Observ" />
+                <ScalarProperty Name="Id_Observacion" ColumnName="Id_Observacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SEGUIMIENTO">
+            <EntityTypeMapping TypeName="bmtktp01Model.SEGUIMIENTO">
+              <MappingFragment StoreEntitySet="SEGUIMIENTO">
+                <ScalarProperty Name="Num_Solicitud" ColumnName="Num_Solicitud" />
+                <ScalarProperty Name="Fecha_Captura" ColumnName="Fecha_Captura" />
+                <ScalarProperty Name="Id_ConsultorMac" ColumnName="Id_ConsultorMac" />
+                <ScalarProperty Name="Id_Solicitud" ColumnName="Id_Solicitud" />
+                <ScalarProperty Name="Id_Tramite" ColumnName="Id_Tramite" />
+                <ScalarProperty Name="ExisteTKT" ColumnName="ExisteTKT" />
+                <ScalarProperty Name="Puntos" ColumnName="Puntos" />
+                <ScalarProperty Name="Circuito" ColumnName="Circuito" />
+                <ScalarProperty Name="Cuenta_Cliente" ColumnName="Cuenta_Cliente" />
+                <ScalarProperty Name="Sufijo_Kapiti" ColumnName="Sufijo_Kapiti" />
+                <ScalarProperty Name="Tipo_Persona" ColumnName="Tipo_Persona" />
+                <ScalarProperty Name="Nombre_Cliente" ColumnName="Nombre_Cliente" />
+                <ScalarProperty Name="Apellido_Paterno" ColumnName="Apellido_Paterno" />
+                <ScalarProperty Name="Apellido_Materno" ColumnName="Apellido_Materno" />
+                <ScalarProperty Name="Deposito_InicialTKT" ColumnName="Deposito_InicialTKT" />
+                <ScalarProperty Name="Numero_Registro" ColumnName="Numero_Registro" />
+                <ScalarProperty Name="Nombre_Promotor" ColumnName="Nombre_Promotor" />
+                <ScalarProperty Name="Banca" ColumnName="Banca" />
+                <ScalarProperty Name="Division" ColumnName="Division" />
+                <ScalarProperty Name="Plaza" ColumnName="Plaza" />
+                <ScalarProperty Name="Sucursal" ColumnName="Sucursal" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SEGUIMIENTO_DOCTOS">
+            <EntityTypeMapping TypeName="bmtktp01Model.SEGUIMIENTO_DOCTOS">
+              <MappingFragment StoreEntitySet="SEGUIMIENTO_DOCTOS">
+                <ScalarProperty Name="Num_Solicitud" ColumnName="Num_Solicitud" />
+                <ScalarProperty Name="Repc_Doc" ColumnName="Repc_Doc" />
+                <ScalarProperty Name="Analisis_Mac" ColumnName="Analisis_Mac" />
+                <ScalarProperty Name="Formalizada" ColumnName="Formalizada" />
+                <ScalarProperty Name="Repc_Originales" ColumnName="Repc_Originales" />
+                <ScalarProperty Name="Aten_Originales" ColumnName="Aten_Originales" />
+                <ScalarProperty Name="Originales" ColumnName="Originales" />
+                <ScalarProperty Name="Nivel_Servicico" ColumnName="Nivel_Servicico" />
+                <ScalarProperty Name="Deposito_Inicial" ColumnName="Deposito_Inicial" />
+                <ScalarProperty Name="Desbloqueo_Sistemas" ColumnName="Desbloqueo_Sistemas" />
+                <ScalarProperty Name="Envio_Agencia" ColumnName="Envio_Agencia" />
+                <ScalarProperty Name="Concluida" ColumnName="Concluida" />
+                <ScalarProperty Name="Cancelacion" ColumnName="Cancelacion" />
+                <ScalarProperty Name="Id_SeguimientoDoc" ColumnName="Id_SeguimientoDoc" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SEGUIMIENTO_OBSERVACIONES">
+            <EntityTypeMapping TypeName="bmtktp01Model.SEGUIMIENTO_OBSERVACIONES">
+              <MappingFragment StoreEntitySet="SEGUIMIENTO_OBSERVACIONES">
+                <ScalarProperty Name="Num_Solicitud" ColumnName="Num_Solicitud" />
+                <ScalarProperty Name="Id_Observacion" ColumnName="Id_Observacion" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="bmtktp01ModelStoreContainer" CdmEntityContainer="bmtktp01Entities">
+    <EntitySetMapping Name="OBSERVACIONES">
+      <EntityTypeMapping TypeName="bmtktp01Model.OBSERVACIONES">
+        <MappingFragment StoreEntitySet="OBSERVACIONES">
+          <ScalarProperty Name="Observaciones1" ColumnName="Observaciones" />
+          <ScalarProperty Name="Fecha_Observ" ColumnName="Fecha_Observ" />
+          <ScalarProperty Name="Id_Observacion" ColumnName="Id_Observacion" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SEGUIMIENTO">
+      <EntityTypeMapping TypeName="bmtktp01Model.SEGUIMIENTO">
+        <MappingFragment StoreEntitySet="SEGUIMIENTO">
+          <ScalarProperty Name="Num_Solicitud" ColumnName="Num_Solicitud" />
+          <ScalarProperty Name="Fecha_Captura" ColumnName="Fecha_Captura" />
+          <ScalarProperty Name="Id_ConsultorMac" ColumnName="Id_ConsultorMac" />
+          <ScalarProperty Name="Id_Solicitud" ColumnName="Id_Solicitud" />
+          <ScalarProperty Name="Id_Tramite" ColumnName="Id_Tramite" />
+          <ScalarProperty Name="ExisteTKT" ColumnName="ExisteTKT" />
+          <ScalarProperty Name="Puntos" ColumnName="Puntos" />
+          <ScalarProperty Name="Circuito" ColumnName="Circuito" />
+          <ScalarProperty Name="Cuenta_Cliente" ColumnName="Cuenta_Cliente" />
+          <ScalarProperty Name="Sufijo_Kapiti" ColumnName="Sufijo_Kapiti" />
+          <ScalarProperty Name="Tipo_Persona" ColumnName="Tipo_Persona" />
+          <ScalarProperty Name="Nombre_Cliente" ColumnName="Nombre_Cliente" />
+          <ScalarProperty Name="Apellido_Paterno" ColumnName="Apellido_Paterno" />
+          <ScalarProperty Name="Apellido_Materno" ColumnName="Apellido_Materno" />
+          <ScalarProperty Name="Deposito_InicialTKT" ColumnName="Deposito_InicialTKT" />
+          <ScalarProperty Name="Numero_Registro" ColumnName="Numero_Registro" />
+          <ScalarProperty Name="Nombre_Promotor" ColumnName="Nombre_Promotor" />
+          <ScalarProperty Name="Banca" ColumnName="Banca" />
+          <ScalarProperty Name="Division" ColumnName="Division" />
+          <ScalarProperty Name="Plaza" ColumnName="Plaza" />
+          <ScalarProperty Name="Sucursal" ColumnName="Sucursal" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SEGUIMIENTO_DOCTOS">
+      <EntityTypeMapping TypeName="bmtktp01Model.SEGUIMIENTO_DOCTOS">
+        <MappingFragment StoreEntitySet="SEGUIMIENTO_DOCTOS">
+          <ScalarProperty Name="Num_Solicitud" ColumnName="Num_Solicitud" />
+          <ScalarProperty Name="Repc_Doc" ColumnName="Repc_Doc" />
+          <ScalarProperty Name="Analisis_Mac" ColumnName="Analisis_Mac" />
+          <ScalarProperty Name="Formalizada" ColumnName="Formalizada" />
+          <ScalarProperty Name="Repc_Originales" ColumnName="Repc_Originales" />
+          <ScalarProperty Name="Aten_Originales" ColumnName="Aten_Originales" />
+          <ScalarProperty Name="Originales" ColumnName="Originales" />
+          <ScalarProperty Name="Nivel_Servicico" ColumnName="Nivel_Servicico" />
+          <ScalarProperty Name="Deposito_Inicial" ColumnName="Deposito_Inicial" />
+          <ScalarProperty Name="Desbloqueo_Sistemas" ColumnName="Desbloqueo_Sistemas" />
+          <ScalarProperty Name="Envio_Agencia" ColumnName="Envio_Agencia" />
+          <ScalarProperty Name="Concluida" ColumnName="Concluida" />
+          <ScalarProperty Name="Cancelacion" ColumnName="Cancelacion" />
+          <ScalarProperty Name="Id_SeguimientoDoc" ColumnName="Id_SeguimientoDoc" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SEGUIMIENTO_OBSERVACIONES">
+      <EntityTypeMapping TypeName="bmtktp01Model.SEGUIMIENTO_OBSERVACIONES">
+        <MappingFragment StoreEntitySet="SEGUIMIENTO_OBSERVACIONES">
+          <ScalarProperty Name="Num_Solicitud" ColumnName="Num_Solicitud" />
+          <ScalarProperty Name="Id_Observacion" ColumnName="Id_Observacion" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
