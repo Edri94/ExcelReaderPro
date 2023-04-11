@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExelReaderPro.Datos;
 using ExelReaderPro.Model;
+using ExelReaderPro.Negocio;
 using IronXL;
 
 namespace ExelReaderPro
 {
     public partial class Form1 : Form
     {
-        List<string> nombres_archivo;
+        List<string> nombres_archivos;
         WorkSheet hoja;
         List<ObservacionSeguimiento> lista_observaciones;
 
@@ -23,8 +24,17 @@ namespace ExelReaderPro
         {
             InitializeComponent();
 
-            nombres_archivo = new List<string>();
+            nombres_archivos = new List<string>();
             lista_observaciones = new List<ObservacionSeguimiento>();
+
+            MessageBox.Show("Indica una ruta odnde se guardara el Log");
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                Log.RutaLog = folderBrowserDialog1.SelectedPath + "\\";
+                Log.EscribeLog = true;
+            }
+
+            Log.Escribe("Establecida Ruta Log");
         }
 
         private void btnCargar_Click(object sender, EventArgs e)
@@ -32,20 +42,10 @@ namespace ExelReaderPro
             try
             {
                 openFileDialog1.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-
+                openFileDialog1.Multiselect = true;
+                          
                 if (openFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-                    txtArchivo.Text = openFileDialog1.FileName;
-
-                    string extension = GetExtension(openFileDialog1.FileName);
-
-                    string nombre_archivo = GetFileName(openFileDialog1.FileName); ;
-
-                    nombres_archivo.Add(nombre_archivo);
-
-                    WorkBook libro = WorkBook.Load(openFileDialog1.FileName);
-                    hoja = libro.WorkSheets.First();
-
                     if (!backgroundWorker1.IsBusy)
                     {
                         backgroundWorker1.RunWorkerAsync();
@@ -53,19 +53,13 @@ namespace ExelReaderPro
                     else
                     {
                         MessageBox.Show("Ya hay una tarea ejecutandose. Favor de Esperar", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-
-                }
+                    }                     
+                }            
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
-
-            
-
-            
-           
+            } 
         }
 
         private int EncontrarUltimaFila(WorkSheet hoja)
@@ -143,61 +137,162 @@ namespace ExelReaderPro
             }
         }
 
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void LecturaArchivo()
         {
-            int filas = hoja.RowCount;
-            int columnas = hoja.ColumnCount;
+            
+        }
 
-            int ultima_fila = EncontrarUltimaFila(hoja);
-
-            SEGUIMIENTO seguimiento;
-
-            for (int i = 0; i <= filas - 1; i++)
+        private void btnCargarBd_Click(object sender, EventArgs e)
+        {
+            try
             {
-                if (i >= 2)
+                foreach (ObservacionSeguimiento observacion in lista_observaciones)
                 {
-                    if (hoja.Rows[i].Columns[1].ToString().Trim() != "")
+                    CargarObservacion(observacion);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private bool CargarObservacion(ObservacionSeguimiento observacion)
+        {
+            try
+            {             
+                using(bmtktp01Entities context = new bmtktp01Entities())
+                {
+                    string fecha_busqueda = observacion.Observacion.Substring(0, 26);
+                    Log.Escribe($"1) Encontrar observacion: {Environment.NewLine} {observacion.Observacion}");
+                    OBSERVACIONES observacion_encontrada = context.OBSERVACIONES.Where(x => x.Observaciones1.Contains(fecha_busqueda)).FirstOrDefault();
+                    
+                    if(observacion_encontrada != null)
                     {
-                        seguimiento = new SEGUIMIENTO
+                        Log.Escribe($"2) Observacion encontrada.");
+
+                        SEGUIMIENTO_OBSERVACIONES seg_obs = context.SEGUIMIENTO_OBSERVACIONES.Where(x => x.Num_Solicitud == observacion.Num_Seguimiento && x.Id_Observacion == observacion_encontrada.Id_Observacion).FirstOrDefault();
+
+                        if (seg_obs == null)
                         {
-                            Num_Solicitud = Int32.Parse(hoja.Rows[i].Columns[1].ToString()),
-
-                        };
-
-                        lblNumSolicitud.Invoke(new MethodInvoker(delegate {
-
-                            lblNumSolicitud.Text = seguimiento.Num_Solicitud.ToString();
-
-                        }));
-
-                        string observaciones = hoja.Rows[i].Columns[41].ToString();
-
-                        lista_observaciones.AddRange(GetObservaciones(observaciones, seguimiento.Num_Solicitud));
-
-                        if (lista_observaciones == null)
+                            Log.Escribe($"3) Observacion {observacion_encontrada.Id_Observacion} no  dada de alta en SEGUIMIENTO_OBSERVACIONES");
+                            return true;
+                        }
+                        else
                         {
-                            MessageBox.Show("Fallo al obtener las observaciones");
-                        }                     
-                    }
+                            Log.Escribe($"3) Observacion {observacion_encontrada.Id_Observacion} ya se ha dado de alta  anteriormente en SEGUIMIENTO_OBSERVACIONES");
+                            return false;
+                        }
+                    } 
                     else
                     {
-                        break;
+                        Log.Escribe($"2) Observacion del dia {fecha_busqueda} no encontrada");
+
+                        return false;
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
 
-            dataGridView1.Invoke(new MethodInvoker(delegate {
-                
-                dataGridView1.DataSource = lista_observaciones;
-                dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                dataGridView1.Refresh();
+        private void Form1_Load(object sender, EventArgs e)
+        {
 
-            }));
+        }
 
-            lstArchivos.DataSource = nombres_archivo;
-        
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                this.Invoke(new MethodInvoker(delegate {
+
+                    nombres_archivos = openFileDialog1.FileNames.ToList();
+
+                    lstArchivos.DataSource = nombres_archivos;
+                    lstArchivos.Refresh();                 
+                }));
+
+                foreach (string FileName in nombres_archivos)
+                {
+
+                    txtArchivo.Invoke(new MethodInvoker(delegate {
+                        txtArchivo.Text = FileName;
+                    }));
+
+                    string extension = GetExtension(FileName);
+
+                    string nombre_archivo = GetFileName(FileName);
+
+                    Log.Escribe("Archivo: ***** " + nombre_archivo + " *****");
+
+                    WorkBook libro = WorkBook.Load(FileName);
+                    hoja = libro.WorkSheets.First();
+
+                    int filas = hoja.RowCount;
+                    int columnas = hoja.ColumnCount;
+
+                    int ultima_fila = EncontrarUltimaFila(hoja);
+                    int filas_datos = 0;
+
+                    Log.Escribe(" - El archivo tiene " + filas + " filas.");
+
+                    SEGUIMIENTO seguimiento;
+
+                    for (int i = 0; i <= filas - 1; i++)
+                    {
+                        if (i >= 2)
+                        {
+                            if (hoja.Rows[i].Columns[1].ToString().Trim() != "")
+                            {
+                                seguimiento = new SEGUIMIENTO
+                                {
+                                    Num_Solicitud = Int32.Parse(hoja.Rows[i].Columns[1].ToString()),
+                                };
+
+                                lblNumSolicitud.Invoke(new MethodInvoker(delegate {
+                                    lblNumSolicitud.Text = seguimiento.Num_Solicitud.ToString();
+                                }));
+
+                                
+
+                                string observaciones = hoja.Rows[i].Columns[41].ToString();
+
+                                lista_observaciones.AddRange(GetObservaciones(observaciones, seguimiento.Num_Solicitud));
+
+                                if (lista_observaciones == null)
+                                {
+                                    MessageBox.Show("Fallo al obtener las observaciones");
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            filas_datos = i;
+
+                            Log.Escribe("- Filas encontradas con datos: " + filas_datos);
+                        }
+                    }
+                }
+
+                dataGridView1.Invoke(new MethodInvoker(delegate {
+                    dataGridView1.DataSource = lista_observaciones;
+                    dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    dataGridView1.Refresh();
+                }));
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
         }
     }
 }
