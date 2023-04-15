@@ -35,6 +35,7 @@ namespace ExelReaderPro
             }
 
             Log.Escribe("Establecida Ruta Log");
+            this.Show();
         }
 
         private void btnCargar_Click(object sender, EventArgs e)
@@ -144,17 +145,15 @@ namespace ExelReaderPro
 
         private void btnCargarBd_Click(object sender, EventArgs e)
         {
-            try
+            if (!backgroundWorker1.IsBusy)
             {
-                foreach (ObservacionSeguimiento observacion in lista_observaciones)
-                {
-                    CargarObservacion(observacion);
-                }
+                backgroundWorker1.RunWorkerAsync();
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Ya hay una tarea ejecutandose. Favor de Esperar", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+                      
         }
 
         private bool CargarObservacion(ObservacionSeguimiento observacion)
@@ -216,9 +215,9 @@ namespace ExelReaderPro
                     lstArchivos.Refresh();                 
                 }));
 
-                foreach (string FileName in nombres_archivos)
-                {
 
+                foreach (string FileName in nombres_archivos)
+                {                  
                     txtArchivo.Invoke(new MethodInvoker(delegate {
                         txtArchivo.Text = FileName;
                     }));
@@ -242,8 +241,17 @@ namespace ExelReaderPro
 
                     SEGUIMIENTO seguimiento;
 
+                    lblArchivoCargando.Invoke(new MethodInvoker(delegate {
+                        lblArchivoCargando.Text = GetFileName(FileName);
+                    }));
+
+                    
+
                     for (int i = 0; i <= filas - 1; i++)
                     {
+                        int porcentaje = (i * 100) / filas;
+                        backgroundWorker1.ReportProgress(porcentaje);
+
                         if (i >= 2)
                         {
                             if (hoja.Rows[i].Columns[1].ToString().Trim() != "")
@@ -287,6 +295,34 @@ namespace ExelReaderPro
                     dataGridView1.Refresh();
                 }));
 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBar1.Value = 0;
+            lblArchivoCargando.Text = "TERMINADO";
+            lblNumSolicitud.Text = "0";
+        }
+
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                foreach (ObservacionSeguimiento observacion in lista_observaciones)
+                {
+                    CargarObservacion(observacion);
+                }
             }
             catch (Exception ex)
             {

@@ -41,7 +41,12 @@ namespace ExelReaderPro
             this.btnCargarBd = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.btnCargar = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblArchivoCargando = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -97,7 +102,7 @@ namespace ExelReaderPro
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 534);
+            this.label3.Location = new System.Drawing.Point(182, 45);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(133, 20);
             this.label3.TabIndex = 6;
@@ -109,7 +114,7 @@ namespace ExelReaderPro
             this.lblNumSolicitud.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblNumSolicitud.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.lblNumSolicitud.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNumSolicitud.Location = new System.Drawing.Point(164, 528);
+            this.lblNumSolicitud.Location = new System.Drawing.Point(321, 39);
             this.lblNumSolicitud.Name = "lblNumSolicitud";
             this.lblNumSolicitud.Size = new System.Drawing.Size(117, 33);
             this.lblNumSolicitud.TabIndex = 6;
@@ -118,11 +123,14 @@ namespace ExelReaderPro
             // 
             // backgroundWorker1
             // 
+            this.backgroundWorker1.WorkerReportsProgress = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
             // btnCargarBd
             // 
-            this.btnCargarBd.Location = new System.Drawing.Point(782, 528);
+            this.btnCargarBd.Location = new System.Drawing.Point(26, 39);
             this.btnCargarBd.Name = "btnCargarBd";
             this.btnCargarBd.Size = new System.Drawing.Size(116, 33);
             this.btnCargarBd.TabIndex = 7;
@@ -143,14 +151,46 @@ namespace ExelReaderPro
             this.btnCargar.UseVisualStyleBackColor = true;
             this.btnCargar.Click += new System.EventHandler(this.btnCargar_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(489, 45);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(1079, 27);
+            this.progressBar1.TabIndex = 8;
+            // 
+            // lblArchivoCargando
+            // 
+            this.lblArchivoCargando.AutoSize = true;
+            this.lblArchivoCargando.Location = new System.Drawing.Point(485, 22);
+            this.lblArchivoCargando.Name = "lblArchivoCargando";
+            this.lblArchivoCargando.Size = new System.Drawing.Size(61, 20);
+            this.lblArchivoCargando.TabIndex = 9;
+            this.lblArchivoCargando.Text = "Archivo";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnCargarBd);
+            this.groupBox1.Controls.Add(this.lblArchivoCargando);
+            this.groupBox1.Controls.Add(this.progressBar1);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.lblNumSolicitud);
+            this.groupBox1.Location = new System.Drawing.Point(12, 534);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(1589, 100);
+            this.groupBox1.TabIndex = 10;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Proceder a carga";
+            // 
+            // backgroundWorker2
+            // 
+            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1632, 579);
-            this.Controls.Add(this.btnCargarBd);
-            this.Controls.Add(this.lblNumSolicitud);
-            this.Controls.Add(this.label3);
+            this.ClientSize = new System.Drawing.Size(1632, 656);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label1);
@@ -161,6 +201,8 @@ namespace ExelReaderPro
             this.Text = "ExcelReaderPro v1.0.0.1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -180,6 +222,10 @@ namespace ExelReaderPro
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Button btnCargarBd;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label lblArchivoCargando;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker2;
     }
 }
 
