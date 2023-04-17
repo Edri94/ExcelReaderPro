@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -145,9 +146,9 @@ namespace ExelReaderPro
 
         private void btnCargarBd_Click(object sender, EventArgs e)
         {
-            if (!backgroundWorker1.IsBusy)
+            if (!backgroundWorker2.IsBusy)
             {
-                backgroundWorker1.RunWorkerAsync();
+                backgroundWorker2.RunWorkerAsync();
             }
             else
             {
@@ -156,46 +157,51 @@ namespace ExelReaderPro
                       
         }
 
-        private bool CargarObservacion(ObservacionSeguimiento observacion)
+        private bool CargarObservacion(ObservacionSeguimiento observacion, bmtktp01Entities context, DbContextTransaction trx)
         {
-            try
-            {             
-                using(bmtktp01Entities context = new bmtktp01Entities())
+                        
+            string fecha_busqueda = observacion.Observacion.Substring(0, 26);
+            Log.Escribe($"1) Encontrar observacion: {Environment.NewLine} {observacion.Observacion}");
+            OBSERVACIONES observacion_encontrada = context.OBSERVACIONES.Where(x => x.Observaciones1.Contains(fecha_busqueda)).FirstOrDefault();
+
+            if (observacion_encontrada != null)
+            {
+                Log.Escribe($"2) Observacion encontrada.");
+
+                SEGUIMIENTO_OBSERVACIONES seg_obs = context.SEGUIMIENTO_OBSERVACIONES.Where(x => x.Num_Solicitud == observacion.Num_Seguimiento && x.Id_Observacion == observacion_encontrada.Id_Observacion).FirstOrDefault();
+
+                if (seg_obs == null)
                 {
-                    string fecha_busqueda = observacion.Observacion.Substring(0, 26);
-                    Log.Escribe($"1) Encontrar observacion: {Environment.NewLine} {observacion.Observacion}");
-                    OBSERVACIONES observacion_encontrada = context.OBSERVACIONES.Where(x => x.Observaciones1.Contains(fecha_busqueda)).FirstOrDefault();
-                    
-                    if(observacion_encontrada != null)
+                    Log.Escribe($"3) Observacion {observacion_encontrada.Id_Observacion} no  dada de alta en SEGUIMIENTO_OBSERVACIONES");
+
+                    context.SEGUIMIENTO_OBSERVACIONES.Add(new SEGUIMIENTO_OBSERVACIONES { Id_Observacion = observacion_encontrada.Id_Observacion, Num_Solicitud = observacion.Num_Seguimiento });
+
+                    int insertados = context.SaveChanges();
+
+                    if(insertados > 0)
                     {
-                        Log.Escribe($"2) Observacion encontrada.");
-
-                        SEGUIMIENTO_OBSERVACIONES seg_obs = context.SEGUIMIENTO_OBSERVACIONES.Where(x => x.Num_Solicitud == observacion.Num_Seguimiento && x.Id_Observacion == observacion_encontrada.Id_Observacion).FirstOrDefault();
-
-                        if (seg_obs == null)
-                        {
-                            Log.Escribe($"3) Observacion {observacion_encontrada.Id_Observacion} no  dada de alta en SEGUIMIENTO_OBSERVACIONES");
-                            return true;
-                        }
-                        else
-                        {
-                            Log.Escribe($"3) Observacion {observacion_encontrada.Id_Observacion} ya se ha dado de alta  anteriormente en SEGUIMIENTO_OBSERVACIONES");
-                            return false;
-                        }
-                    } 
-                    else
-                    {
-                        Log.Escribe($"2) Observacion del dia {fecha_busqueda} no encontrada");
-
-                        return false;
+                        Log.Escribe($"4) Observacion {observacion_encontrada.Id_Observacion} insertada");
+                        return true;
                     }
+                    else 
+                    {
+                        Log.Escribe($"4) Observacion {observacion_encontrada.Id_Observacion} NO insertada");
+                        return false;
+                    } 
+
+                }
+                else
+                {
+                    Log.Escribe($"3) Observacion {observacion_encontrada.Id_Observacion} ya se ha dado de alta  anteriormente en SEGUIMIENTO_OBSERVACIONES");
+                    return false;
                 }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message);
+                Log.Escribe($"2) Observacion del dia {fecha_busqueda} no encontrada");
+
                 return false;
-            }
+            }                                        
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -317,18 +323,53 @@ namespace ExelReaderPro
 
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
-            try
+            MessageBox.Show(" Se insertaran " + lista_observaciones.Count + " observaciones nuevas.");
+
+            using (bmtktp01Entities context = new bmtktp01Entities())
             {
-                foreach (ObservacionSeguimiento observacion in lista_observaciones)
+                using (DbContextTransaction trx = context.Database.BeginTransaction())
                 {
-                    CargarObservacion(observacion);
+                    try
+                    {
+                        int progreso = 0;
+
+                        foreach (ObservacionSeguimiento observacion in lista_observaciones)
+                        {
+                            CargarObservacion(observacion, context, trx);
+                            progreso ++;
+
+                            int porcentaje = (progreso * 100) / lista_observaciones.Count;
+                            backgroundWorker2.ReportProgress(porcentaje);
+
+                            lblArchivoCargando.Invoke(new MethodInvoker(delegate {
+                                lblArchivoCargando.Text = "Cargando observacion " + observacion.Observacion;
+                            }));
+
+                        }
+                        trx.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+
+                        trx.Rollback();
+                    }
+                   
+
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            }        
             
+        }
+
+        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBar1.Value = 0;
+            lblArchivoCargando.Text = "OBSERVACIONES CARGADAS";
+        }
+
+        private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
         }
     }
 }
